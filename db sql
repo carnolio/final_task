@@ -1,4 +1,4 @@
-CREATE TABLE `link_shortener`.`users` ( `user_id` INT NOT NULL AUTO_INCREMENT , `login` VARCHAR(45) NOT NULL , `mail` VARCHAR(100) NOT NULL , `password_hash` VARCHAR(100) NOT NULL , PRIMARY KEY (`user_id`), UNIQUE (`login`), UNIQUE (`mail`)) ENGINE = InnoDB;
+CREATE TABLE `users` (`user_id` int NOT NULL AUTO_INCREMENT, `mail` varchar(100) NOT NULL, `password_hash` varchar(100) NOT NULL, PRIMARY KEY (`user_id`), UNIQUE KEY `mail` (`mail`)) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 CREATE TABLE IF NOT EXISTS `link_shortener`.`link_type` (`ID` INT NOT NULL AUTO_INCREMENT,`type` VARCHAR(45) NOT NULL,PRIMARY KEY (`ID`)) ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `link_shortener`.`shorted` ( `id` INT NOT NULL AUTO_INCREMENT, `original` VARCHAR(200) NOT NULL, `short` VARCHAR(60) NOT NULL, `friendly_link` VARCHAR(60) NULL, `user_id` INT NOT NULL, `type_id` INT NOT NULL, `counter_id` INT NOT NULL, PRIMARY KEY (`id`)) ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `link_shortener`.`counters` ( `id` INT NOT NULL AUTO_INCREMENT, `count` INT NOT NULL DEFAULT 0, PRIMARY KEY (`id`)) ENGINE = InnoDB;
