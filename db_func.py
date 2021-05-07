@@ -30,34 +30,47 @@ def get_link_type():
     return link_type
 
 def get_hash(password):
-    #password = "!Example secure password!"
-    password = password.encode()
-    salt = os.urandom(16)
-    #password_hash = hashlib.pbkdf2_hmac("sha256", password, salt, 100000)
     password_hash = pbkdf2_sha256.hash(password)
     return password_hash
 
 def pass_is_correct(password_for_verify, mail):
-    pass
+    user = get_user(mail)
+    hash_verify = get_hash(password_for_verify)
+    print("Hash: ", hash_verify)
+    print("user_hash: ", user["password_hash"])
+    print("sha", pbkdf2_sha256.identify(user["password_hash"]))
+    print("sha", pbkdf2_sha256.identify(hash_verify))
+    if hash_verify == user["password_hash"]:
+        return True
+    else:
+        return False
+
+    # >> > hash = pbkdf2_sha256.hash("password")
+    # >> > pbkdf2_sha256.identify(hash)
+    # True
+    #
+    # >> > pbkdf2_sha256.identify(other_hash)
+    # False
+
+    #pbkdf2_sha256.identify(user["password_hash"])
     #pbkdf2_sha256.identify(hash)
-    #True
     #pbkdf2_sha256.identify(other_hash)
-    #False
-    #    return True
-    #    return False
 
 
 def get_user(mail):
-    user_data = list()
+    user_data = {}
     cnx = mysql.connector.connect(user=mysql_user, password=mysql_password,
                                   host=mysql_host,
                                   database=mysql_database)
     cursor = cnx.cursor()
-    query = (f"SELECT * from users where users.mail = {mail}")
+    query = (f"SELECT * from users where mail = '{mail}'")
+    #print(query)
     cursor.execute(query)
     for user in cursor:
-        user_data.append(user)
-        print (user)
+        #user_data.append(user)
+        print(user)
+        user_data["mail"] = user[1]
+        user_data["password_hash"] = user[2]
     cursor.close()
     cnx.close()
     return user_data
@@ -66,13 +79,13 @@ def add_user(mail, password):
     cnx = mysql.connector.connect(user=mysql_user, password=mysql_password,
                                   host=mysql_host,
                                   database=mysql_database)
+    #приводим к нижнему
+    mail = mail.lower()
     cursor = cnx.cursor()
     password_hash=get_hash(password)
     print(password_hash)
-    #password_hash = password
-    #query = f"INSERT INTO users (mail, password_hash) VALUES ('{mail}',{password_hash})"
     query = f"INSERT INTO users (mail, password_hash) VALUES ('{mail}','{password_hash}')"
-    print(query)
+    #print(query)
     cursor.execute(query)
     cursor.close()
     cnx.commit()
@@ -82,5 +95,6 @@ def add_user(mail, password):
 
 
 get_link_type()
-print(get_hash("password"))
-add_user("carnolio@gmail.com","password")
+#add_user("carnolio@gmail.com","password")
+print(get_user('carnolio@gmail.com'))
+print(pass_is_correct("password","carnolio@gmail.com"))
