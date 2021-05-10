@@ -14,6 +14,7 @@ mysql_database = 'link_shortener'
 mysql_user = 'root'
 mysql_password = 'P@ssw0rd'
 def generate_short_link (original):
+#Ссылки должны сокращаться до длины от 8 до 12 символов не считая имени хоста:
     pass
 
 def add_counter ():
