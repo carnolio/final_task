@@ -16,7 +16,35 @@ mysql_password = 'P@ssw0rd'
 def generate_short_link (original):
     pass
 
-def add_link(original,short,user_id,type_id,counter_id,friendly_link = "None"):
+def add_counter ():
+    cnx = mysql.connector.connect(user=mysql_user, password=mysql_password,
+                                  host=mysql_host,
+                                  database=mysql_database)
+    cursor = cnx.cursor()
+    query = f"INSERT INTO counters (count) VALUES ('0')"
+    # print(query)
+    cursor.execute(query)
+    cursor.close()
+    cnx.commit()
+    cnx.close()
+
+
+    cnx = mysql.connector.connect(user=mysql_user, password=mysql_password,
+                                  host=mysql_host,
+                                  database=mysql_database)
+    cursor = cnx.cursor()
+    query = f"select MAX(ID) from counters"
+    # print(query)
+    cursor.execute(query)
+    for res in cursor:
+        result = res[0]
+    print("res",result)
+    cursor.close()
+    cnx.close()
+    return result
+
+
+def add_link(original,short,user_id,type_id,friendly_link = "None"):
     cnx = mysql.connector.connect(user=mysql_user, password=mysql_password,
                                   host=mysql_host,
                                   database=mysql_database)
@@ -39,7 +67,7 @@ def add_link(original,short,user_id,type_id,counter_id,friendly_link = "None"):
     {friendly_link},
     {user_id},
     {type_id},
-    {counter_id});
+    {add_counter()});
     """
     print(query)
     cursor.execute(query)
@@ -131,3 +159,4 @@ get_link_type()
 #add_user("carnolio@gmail.com","password")
 print(get_user('carnolio@gmail.com'))
 print(pass_is_correct("password","carnolio@gmail.com"))
+print(add_counter())
