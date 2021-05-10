@@ -13,6 +13,43 @@ mysql_host = '127.0.0.1'
 mysql_database = 'link_shortener'
 mysql_user = 'root'
 mysql_password = 'P@ssw0rd'
+def generate_short_link (original):
+    pass
+
+def add_link(original,short,user_id,type_id,counter_id,friendly_link = "None"):
+    cnx = mysql.connector.connect(user=mysql_user, password=mysql_password,
+                                  host=mysql_host,
+                                  database=mysql_database)
+    #приводим к нижнему
+
+    cursor = cnx.cursor()
+
+    #query = f"INSERT INTO users (mail, password_hash) VALUES ('{mail}','{password_hash}')"
+    query = f"""INSERT INTO `link_shortener`.`shorted`
+    (
+    `original`,
+    `short`,
+    `friendly_link`,
+    `user_id`,
+    `type_id`,
+    `counter_id`)
+    VALUES
+    ({original},
+    {short},
+    {friendly_link},
+    {user_id},
+    {type_id},
+    {counter_id});
+    """
+    print(query)
+    cursor.execute(query)
+    cursor.close()
+    cnx.commit()
+    cnx.close()
+    #print(f"query")
+
+
+
 
 def get_link_type():
     link_type = list()
@@ -35,21 +72,17 @@ def get_hash(password):
 
 def pass_is_correct(password_for_verify, mail):
     user = get_user(mail)
-    hash_verify = get_hash(password_for_verify)
-    print("Hash: ", hash_verify)
-    print("user_hash: ", user["password_hash"])
-    print("sha", pbkdf2_sha256.identify(user["password_hash"]))
-    print("sha", pbkdf2_sha256.identify(hash_verify))
-    if hash_verify == user["password_hash"]:
+    #print("pass_foe ver",password_for_verify)
+    #print("Hash: ", hash_verify)
+    #print("user_hash: ", user["password_hash"])
+    #print("sha", pbkdf2_sha256.identify(user["password_hash"]))
+    #print("sha_mih",pbkdf2_sha256.verify(password_for_verify, user["password_hash"]))
+    if pbkdf2_sha256.verify(password_for_verify, user["password_hash"]):
         return True
     else:
         return False
 
-    # >> > hash = pbkdf2_sha256.hash("password")
-    # >> > pbkdf2_sha256.identify(hash)
     # True
-    #
-    # >> > pbkdf2_sha256.identify(other_hash)
     # False
 
     #pbkdf2_sha256.identify(user["password_hash"])
@@ -82,7 +115,7 @@ def add_user(mail, password):
     #приводим к нижнему
     mail = mail.lower()
     cursor = cnx.cursor()
-    password_hash=get_hash(password)
+    password_hash = get_hash(password)
     print(password_hash)
     query = f"INSERT INTO users (mail, password_hash) VALUES ('{mail}','{password_hash}')"
     #print(query)
